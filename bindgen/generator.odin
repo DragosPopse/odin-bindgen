@@ -154,7 +154,7 @@ generate_foreign_export :: proc(config: ^GeneratorConfig, exports: FileExports, 
         write_string(sb, "\n")
 
         // Add it to the loading proc 
-        sbprintf(psb, "%s = type_of(%s)dynlib.symbol_address(lib, \"%s\") or_return\n    ", fn.name, fn.name, 
+        sbprintf(psb, "%s = cast(type_of(%s))dynlib.symbol_address(lib, \"%s\") or_return\n    ", fn.name, fn.name, 
             strings.concatenate({linkPrefix, fn.name}, context.temp_allocator) if "link_name" not_in fn.attribs else fn.attribs["link_name"].(String))
     }
     
