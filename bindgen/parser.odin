@@ -123,7 +123,7 @@ parse_symbols :: proc(fileName: string) -> (symbol_exports: FileExports) {
     for x, index in root.decls {
         #partial switch x in x.derived {
             case ^ast.Foreign_Block_Decl: {
-                if len(x.attributes) == 0 do continue 
+                //if len(x.attributes) == 0 do continue 
                 foreignBlock, err := parse_foreign_block(root, x)
                 if err == .Export {
                     append(&symbol_exports.symbols, foreignBlock)
@@ -265,9 +265,7 @@ parse_attrib_val :: proc(root: ^ast.File, elem: ^ast.Expr) -> (result: AttribVal
 
 parse_foreign_block :: proc(root: ^ast.File, foreign_block_decl: ^ast.Foreign_Block_Decl, allocator := context.allocator) -> (result: ForeignExport, err: AttribErr) {
     result.attribs = parse_attributes(root, foreign_block_decl)
-    if "Bindgen" not_in result.attribs {
-        return result, .Skip
-    }
+
 
     block := foreign_block_decl.body.derived.(^ast.Block_Stmt)
     

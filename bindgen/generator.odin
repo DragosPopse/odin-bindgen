@@ -13,6 +13,7 @@ GeneratorConfig :: struct {
     files: map[string]PackageFile,
     odin_ext: string,
     proc_name: string,
+    use_custom_attrib: bool,
 }
 
 
@@ -72,6 +73,7 @@ config_from_json :: proc(config: ^GeneratorConfig, file: string) {
     config.input_directory = strings.clone(root["src"].(json.String))
     config.odin_ext = strings.clone(root["odin_ext"].(json.String) or_else ".bindgen.odin")
     config.proc_name = strings.clone(root["proc_name"].(json.String) or_else "bindgen_load")
+    config.use_custom_attrib = root["use_custom_attrib"].(json.Boolean) or_else true
 }
 
 
@@ -183,7 +185,7 @@ generate_bindgen_exports :: proc(config: ^GeneratorConfig, exports: FileExports)
     for exp, i in exports.symbols {
         switch x in exp {
             case ForeignExport: {
-                if "Bindgen" in x.attribs {
+                if "Bindgen" in x.attribs || !config.use_custom_attrib {
                     generate_foreign_export(config, exports, x, exports.relpath)
                 }
             }
