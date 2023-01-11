@@ -1,0 +1,5 @@
+{
+    "src": "test",
+    "odin_ext": ".bindgen.odin",
+    "proc_name": "load_bindings"
+}
