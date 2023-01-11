@@ -105,6 +105,7 @@ config_package :: proc(config: ^GeneratorConfig, pkg: string, filename: string) 
         for _, imp in file.imports {
             write_string(sb, imp.text)
             write_string(sb, "\n")
+            fmt.sbprintf(sb, "_ :: %s\n\n", imp.name)
         }
 
         fmt.sbprintf(psb, "%s :: proc(lib: dynlib.Library) -> bool {{\n    ", config.proc_name)
@@ -168,6 +169,8 @@ add_import :: proc(file: ^PackageFile, import_statement: FileImport) {
         write_string(sb, import_statement.text)
         write_string(sb, "\n")
         file.imports[import_statement.name] = import_statement
+        fmt.sbprintf(sb, "_ :: %s\n", import_statement.name)
+        write_string(sb, "\n")
     }
 }
 
@@ -177,7 +180,7 @@ generate_bindgen_exports :: proc(config: ^GeneratorConfig, exports: FileExports)
     config_package(config, exports.symbols_package, exports.relpath)
     file := &config.files[exports.symbols_package]
     psb := &(file.proc_builder)
-    
+    sb := &file.decl_builder
     for _, imp in exports.imports {
         add_import(file, imp)
     }
